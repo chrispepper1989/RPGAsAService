@@ -15,19 +15,29 @@ namespace RPGAAS
     
     public class BattleSystem : IBattleSystem
     {
+        private Dictionary<string, int> characterAttackPower;
+        private Dictionary<string, int> characterHealth;
+
+        public BattleSystem(Dictionary<string, int> characterAttackPower, Dictionary<string, int> characterHealth)
+        {
+            this.characterAttackPower = characterAttackPower;
+            this.characterHealth = characterHealth;
+        }
+        
         public void Attack(string attackingCharacter, string defendingCharacter)
         {
-            throw new System.NotImplementedException();
+            var attackPower = characterAttackPower[attackingCharacter];
+            characterHealth[defendingCharacter] -= attackPower;
         }
 
         public int GetHealth(string character)
         {
-            throw new System.NotImplementedException();
+            return characterHealth[character];
         }
 
         public bool IsDead(string character)
         {
-            throw new System.NotImplementedException();
+            return GetHealth(character) <= 0;
         }
     }
 }
