@@ -18,7 +18,7 @@ namespace RPGAAS
         
         public void Attack(string attackingCharacter, string defendingCharacter)
         {
-            var buffs = GetModifiers(attackingCharacter);
+            var buffs = GetModifiers(attackingCharacter).OrderBy(x => x.Priority);
             var attackPower = characterAttackPower[attackingCharacter];
             var enemyHealth = characterHealth[defendingCharacter];
           
