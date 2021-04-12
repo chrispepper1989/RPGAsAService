@@ -6,30 +6,48 @@ namespace RPGAAS
 {
     public class BattleSystemTest
     {
-        [Fact]
-        void When_CharacterAttacksOther_HealthIsTaken()
+        private BattleSystem battleSystem;
+        private ModifierRepository modifierRepository;
+        public BattleSystemTest()
         {
-            // arrange
+           
+        }
+
+        private void LoadStandardTestData()
+        {
+            //standard test data
             /*
-             * |Char | health | attack power |
-             * |Hero | 50     | 5           |
-             * |Ogre | 30     | 6           |
-             */
+            * |Char | health | attack power |
+            * |Hero | 50     | 5           |
+            * |Ogre | 30     | 6           |
+            */
             Dictionary<string, int> characterAttackPower = new Dictionary<string, int>
             {
-                {"Hero", 5},
-                {"Ogre", 6}
+                {"Hero", 10},
+                {"Ogre", 10}
             };
             Dictionary<string, int> characterHealth = new Dictionary<string, int>
             {
                 {"Hero", 50},
-                {"Ogre", 30}
+                {"Ogre", 100}
             };
-            
-            // act
-            // john attack ogre once
-            BattleSystem battleSystem = new BattleSystem(characterAttackPower, characterHealth, new ModifierRepository());
+            Dictionary<string, string> characterType =
+                new Dictionary<string, string> //todo character feels like it should possibly be in object now?
+                {
+                    {"Hero", "Fire"},
+                    {"Ogre", "Fire"}
+                };
+
+            modifierRepository = new ModifierRepository();
+            battleSystem = new BattleSystem(characterAttackPower, characterHealth, characterType, modifierRepository);
+        }
+
+        [Fact]
+        void When_CharacterAttacksOther_HealthIsTaken()
+        {
+            LoadStandardTestData();
             battleSystem.Attack("Hero", "Ogre");
+            
             // assert
             // I Expect
             /*
@@ -37,7 +55,7 @@ namespace RPGAAS
              * |Hero | 50     | 5           |
              * |Ogre | 25     | 6           |
              */
-            battleSystem.GetHealth("Ogre").Should().Be(25);
+            battleSystem.GetHealth("Ogre").Should().Be(90);
             battleSystem.GetHealth("Hero").Should().Be(50);
             battleSystem.IsDead("Ogre").Should().Be(false);
             battleSystem.IsDead("Hero").Should().Be(false);
@@ -46,30 +64,12 @@ namespace RPGAAS
         [Fact]
         void When_CharacterAttacksOtherUntilHealthIsGone_CharacterIsDead()
         {
-            // arrange
-            Dictionary<string, int> characterAttackPower = new Dictionary<string, int>
+            LoadStandardTestData();
+            for (var i = 0; i < 10; ++i)
             {
-                {"Hero", 10},
-                {"Ogre", 6}
-            };
-            Dictionary<string, int> characterHealth = new Dictionary<string, int>
-            {
-                {"Hero", 50},
-                {"Ogre", 30}
-            };
-            
-            // act
-            // john attack ogre once
-            BattleSystem battleSystem = new BattleSystem(characterAttackPower, characterHealth, new ModifierRepository());
-            
-            
-            battleSystem.Attack("Hero", "Ogre");
-            battleSystem.GetHealth("Ogre").Should().Be(20);
-            
-            battleSystem.Attack("Hero", "Ogre");
-            battleSystem.GetHealth("Ogre").Should().Be(10);
-            
-            battleSystem.Attack("Hero", "Ogre");
+                battleSystem.Attack("Hero", "Ogre");
+            }
+          
             // assert
             // I Expect
             battleSystem.GetHealth("Ogre").Should().Be(0);
@@ -81,29 +81,14 @@ namespace RPGAAS
         [Fact]
         void When_CharacterHasBuffAttack_BecomesStronger()
         {
-            // arrange
-            Dictionary<string, int> characterAttackPower = new Dictionary<string, int>
-            {
-                {"Hero", 10},
-                {"Ogre", 6}
-            };
-            Dictionary<string, int> characterHealth = new Dictionary<string, int>
-            {
-                {"Hero", 50},
-                {"Ogre", 30}
-            };
-            
-            // act
-            ModifierRepository modifierRepository = new ModifierRepository();
-            BattleSystem battleSystem = new BattleSystem(characterAttackPower, characterHealth, modifierRepository);
-            
+            LoadStandardTestData();
             modifierRepository.AddModifier("Hero", new IncreaseAttackPowerBy(5));
             battleSystem.Attack("Hero", "Ogre");
             
        
             // assert
             // I Expect
-            battleSystem.GetHealth("Ogre").Should().Be(15);
+            battleSystem.GetHealth("Ogre").Should().Be(85);
             battleSystem.GetHealth("Hero").Should().Be(50);
             battleSystem.IsDead("Ogre").Should().Be(false);
             battleSystem.IsDead("Hero").Should().Be(false);
@@ -112,28 +97,13 @@ namespace RPGAAS
         [Fact]
         void When_CharacterHasBuffAttackMultiplier_BecomesStronger()
         {
-            // arrange
-            Dictionary<string, int> characterAttackPower = new Dictionary<string, int>
-            {
-                {"Hero", 10},
-                {"Ogre", 6}
-            };
-            Dictionary<string, int> characterHealth = new Dictionary<string, int>
-            {
-                {"Hero", 50},
-                {"Ogre", 30}
-            };
-            
-            // act
-            ModifierRepository modifierRepository = new ModifierRepository();
-            BattleSystem battleSystem = new BattleSystem(characterAttackPower, characterHealth, modifierRepository);
-            
+            LoadStandardTestData();
             modifierRepository.AddModifier("Hero", new IncreaseAttackMultiplier(2));
             battleSystem.Attack("Hero", "Ogre");
             
        
             // assert
-            battleSystem.GetHealth("Ogre").Should().Be(10);
+            battleSystem.GetHealth("Ogre").Should().Be(80);
             battleSystem.GetHealth("Hero").Should().Be(50);
             battleSystem.IsDead("Ogre").Should().Be(false);
             battleSystem.IsDead("Hero").Should().Be(false);
@@ -142,30 +112,33 @@ namespace RPGAAS
         [Fact]
         void When_CharacterIsAtLowHealth_TriggersSpecialModifier()
         {
-            // arrange
+            
             Dictionary<string, int> characterAttackPower = new Dictionary<string, int>
             {
                 {"Hero", 10},
-                {"Ogre", 6}
+                {"Ogre", 10}
             };
             Dictionary<string, int> characterHealth = new Dictionary<string, int>
             {
                 {"Hero", 1},
-                {"Ogre", 50}
+                {"Ogre", 100}
             };
-            
-            // act
-            ModifierRepository modifierRepository = new ModifierRepository();
+            Dictionary<string, string> characterType =
+                new Dictionary<string, string> //todo character feels like it should possibly be in object now?
+                {
+                    {"Hero", "Fire"},
+                    {"Ogre", "Fire"}
+                };
 
-            BattleSystem battleSystem = new BattleSystem(characterAttackPower, characterHealth, modifierRepository);
-        
+            modifierRepository = new ModifierRepository();
+            battleSystem = new BattleSystem(characterAttackPower, characterHealth, characterType, modifierRepository);
+            
             modifierRepository.AddModifier("Hero", new IncreaseAttackMultiplier(2).WhenHealth( health => health < 5 ));
             battleSystem.Attack("Hero", "Ogre");
             
-       
             // assert
             // I Expect special multiplier to apply
-            battleSystem.GetHealth("Ogre").Should().Be(30);
+            battleSystem.GetHealth("Ogre").Should().Be(80);
             battleSystem.GetHealth("Hero").Should().Be(1);
             battleSystem.IsDead("Ogre").Should().Be(false);
             battleSystem.IsDead("Hero").Should().Be(false);
@@ -173,38 +146,36 @@ namespace RPGAAS
 
 
         [Fact]
-        void When_CharacterTypeIsAdvantage_DealsMoreDamage()
+        void When_CharacterTypeIsAdvantage_DealsDoubleDamage()
         {
-            // arrange
             Dictionary<string, int> characterAttackPower = new Dictionary<string, int>
             {
                 {"Hero", 10},
-                {"Ogre", 6}
+                {"Ogre", 10}
             };
             Dictionary<string, int> characterHealth = new Dictionary<string, int>
             {
-                {"Hero", 1},
-                {"Ogre", 50}
+                {"Hero", 10},
+                {"Ogre", 100}
             };
-            Dictionary<string, string> characterType = new Dictionary<string, string> //todo character feels like it should possibly be in object now?
-            {
-                {"Hero", "Fire"},
-                {"Ogre", "Ice"}
-            };
-            
-            // act
-            ModifierRepository modifierRepository = new ModifierRepository();
+            Dictionary<string, string> characterType =
+                new Dictionary<string, string> //todo character feels like it should possibly be in object now?
+                {
+                    {"Hero", "Fire"},
+                    {"Ogre", "Ice"}
+                };
 
-            BattleSystem battleSystem = new BattleSystem(characterAttackPower, characterHealth, characterType, modifierRepository);
-        
-            modifierRepository.AddModifier("Hero", new IncreaseAttackMultiplier(2).WhenHealth( health => health < 5 ));
+            modifierRepository = new ModifierRepository();
+            battleSystem = new BattleSystem(characterAttackPower, characterHealth, characterType, modifierRepository);
+            
+ 
             battleSystem.Attack("Hero", "Ogre");
             
        
             // assert
             // I Expect special multiplier to apply
-            battleSystem.GetHealth("Ogre").Should().Be(30);
-            battleSystem.GetHealth("Hero").Should().Be(1);
+            battleSystem.GetHealth("Ogre").Should().Be(80);
+            battleSystem.GetHealth("Hero").Should().Be(10);
             battleSystem.IsDead("Ogre").Should().Be(false);
             battleSystem.IsDead("Hero").Should().Be(false);
         }
@@ -214,23 +185,8 @@ namespace RPGAAS
         //todo this is now a modifier repo test really
         void When_CharacterHasBuffMultipliersAndIncrease_IncreaseHappensBeforeMultiplier()
         {
-            // arrange
-            Dictionary<string, int> characterAttackPower = new Dictionary<string, int>
-            {
-                {"Hero", 10},
-                {"Ogre", 6}
-            };
-            Dictionary<string, int> characterHealth = new Dictionary<string, int>
-            {
-                {"Hero", 50},
-                {"Ogre", 50}
-            };
-            
-            // act
-            ModifierRepository modifierRepository = new ModifierRepository();
-
-            BattleSystem battleSystem = new BattleSystem(characterAttackPower, characterHealth, modifierRepository);
-            
+            LoadStandardTestData();
+      
             modifierRepository.AddModifier("Hero", new IncreaseAttackPowerBy(5));
             modifierRepository.AddModifier("Hero", new IncreaseAttackMultiplier(2));
             modifierRepository.AddModifier("Hero", new IncreaseAttackPowerBy(5));
@@ -239,7 +195,7 @@ namespace RPGAAS
        
             // assert
             // I Expect multipliers to applied last
-            battleSystem.GetHealth("Ogre").Should().Be(10);
+            battleSystem.GetHealth("Ogre").Should().Be(60);
             battleSystem.GetHealth("Hero").Should().Be(50);
             battleSystem.IsDead("Ogre").Should().Be(false);
             battleSystem.IsDead("Hero").Should().Be(false);
