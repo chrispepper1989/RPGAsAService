@@ -111,7 +111,7 @@ namespace RPGAAS
             // act
             BattleSystem battleSystem = new BattleSystem(characterAttackPower, characterHealth);
             
-            battleSystem.AddModifier("Hero", new IncreaseAttackPower(5));
+            battleSystem.AddModifier("Hero", new IncreaseAttackPowerBy(5));
             battleSystem.Attack("Hero", "Ogre");
             
        
@@ -124,7 +124,7 @@ namespace RPGAAS
              */
             battleSystem.GetHealth("Ogre").Should().Be(15);
             battleSystem.GetHealth("Hero").Should().Be(50);
-            battleSystem.IsDead("Ogre").Should().Be(true);
+            battleSystem.IsDead("Ogre").Should().Be(false);
             battleSystem.IsDead("Hero").Should().Be(false);
         }
     }
