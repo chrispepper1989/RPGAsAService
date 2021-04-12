@@ -9,8 +9,10 @@ namespace RPGAAS
     {
         private Dictionary<string, int> _characterAttackPower;
         private Dictionary<string, int> _characterHealth;
-        private IModifierRepository _characterModifiers; 
-        public BattleSystem(Dictionary<string, int> characterAttackPower, Dictionary<string, int> characterHealth, IModifierRepository characterModifiers)
+        private IModifierRepository _characterModifiers;
+        private Dictionary<string, string> characterType;
+        public BattleSystem(Dictionary<string, int> characterAttackPower, Dictionary<string, int> characterHealth,
+            Dictionary<string, string> characterType, IModifierRepository characterModifiers)
         {
             _characterModifiers = characterModifiers;
             _characterAttackPower = characterAttackPower;
@@ -21,7 +23,9 @@ namespace RPGAAS
         {
             var buffs = _characterModifiers.GetModifiers(attackingCharacter);
             var attackPower = _characterAttackPower[attackingCharacter];
-          
+            
+            
+            
             foreach (var buff in buffs)
             {
                 attackPower = buff.ModifyAttackPower(attackPower, GetHealth(attackingCharacter));

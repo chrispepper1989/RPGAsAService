@@ -170,9 +170,46 @@ namespace RPGAAS
             battleSystem.IsDead("Ogre").Should().Be(false);
             battleSystem.IsDead("Hero").Should().Be(false);
         }
+
+
+        [Fact]
+        void When_CharacterTypeIsAdvantage_DealsMoreDamage()
+        {
+            // arrange
+            Dictionary<string, int> characterAttackPower = new Dictionary<string, int>
+            {
+                {"Hero", 10},
+                {"Ogre", 6}
+            };
+            Dictionary<string, int> characterHealth = new Dictionary<string, int>
+            {
+                {"Hero", 1},
+                {"Ogre", 50}
+            };
+            Dictionary<string, string> characterType = new Dictionary<string, string> //todo character feels like it should possibly be in object now?
+            {
+                {"Hero", "Fire"},
+                {"Ogre", "Ice"}
+            };
+            
+            // act
+            ModifierRepository modifierRepository = new ModifierRepository();
+
+            BattleSystem battleSystem = new BattleSystem(characterAttackPower, characterHealth, characterType, modifierRepository);
         
-        
-        
+            modifierRepository.AddModifier("Hero", new IncreaseAttackMultiplier(2).WhenHealth( health => health < 5 ));
+            battleSystem.Attack("Hero", "Ogre");
+            
+       
+            // assert
+            // I Expect special multiplier to apply
+            battleSystem.GetHealth("Ogre").Should().Be(30);
+            battleSystem.GetHealth("Hero").Should().Be(1);
+            battleSystem.IsDead("Ogre").Should().Be(false);
+            battleSystem.IsDead("Hero").Should().Be(false);
+        }
+
+
         [Fact]
         //todo this is now a modifier repo test really
         void When_CharacterHasBuffMultipliersAndIncrease_IncreaseHappensBeforeMultiplier()
