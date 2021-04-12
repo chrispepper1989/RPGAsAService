@@ -4,15 +4,6 @@ using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
 
 namespace RPGAAS
 {
-
-   
-    public interface IBattleSystem
-    {
-        public void Attack(string attackingCharacter, string defendingCharacter);
-        public int GetHealth(string character);
-        public bool IsDead(string character);
-    }
-    
     public class BattleSystem : IBattleSystem
     {
         private Dictionary<string, int> characterAttackPower;
@@ -38,6 +29,11 @@ namespace RPGAAS
         public bool IsDead(string character)
         {
             return GetHealth(character) <= 0;
+        }
+
+        public void AddModifier(string character, ICharacterModifier modifier)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

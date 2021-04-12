@@ -44,7 +44,7 @@ namespace RPGAAS
         }
         
         [Fact]
-        void When_CharacterAttacksOtherUntilHealthIsGone_CharacerIsDead()
+        void When_CharacterAttacksOtherUntilHealthIsGone_CharacterIsDead()
         {
             // arrange
             /*
@@ -88,6 +88,44 @@ namespace RPGAAS
             battleSystem.IsDead("Hero").Should().Be(false);
         }
         
-        
+        [Fact]
+        void When_CharacterHasBuffAttack_BecomesStronger()
+        {
+            // arrange
+            /*
+             * |Char | health | attack power |
+             * |Hero | 50     | 5           |
+             * |Ogre | 30     | 6           |
+             */
+            Dictionary<string, int> characterAttackPower = new Dictionary<string, int>
+            {
+                {"Hero", 10},
+                {"Ogre", 6}
+            };
+            Dictionary<string, int> characterHealth = new Dictionary<string, int>
+            {
+                {"Hero", 50},
+                {"Ogre", 30}
+            };
+            
+            // act
+            BattleSystem battleSystem = new BattleSystem(characterAttackPower, characterHealth);
+            
+            battleSystem.AddModifier("Hero", new IncreaseAttackPower(5));
+            battleSystem.Attack("Hero", "Ogre");
+            
+       
+            // assert
+            // I Expect
+            /*
+             * |Char | health | attack power |
+             * |Hero | 50     | 5           |
+             * |Ogre | 25     | 6           |
+             */
+            battleSystem.GetHealth("Ogre").Should().Be(15);
+            battleSystem.GetHealth("Hero").Should().Be(50);
+            battleSystem.IsDead("Ogre").Should().Be(true);
+            battleSystem.IsDead("Hero").Should().Be(false);
+        }
     }
 }
