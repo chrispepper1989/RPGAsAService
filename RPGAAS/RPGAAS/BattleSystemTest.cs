@@ -28,7 +28,7 @@ namespace RPGAAS
             
             // act
             // john attack ogre once
-            BattleSystem battleSystem = new BattleSystem(characterAttackPower, characterHealth);
+            BattleSystem battleSystem = new BattleSystem(characterAttackPower, characterHealth, new ModifierRepository());
             battleSystem.Attack("Hero", "Ogre");
             // assert
             // I Expect
@@ -60,7 +60,7 @@ namespace RPGAAS
             
             // act
             // john attack ogre once
-            BattleSystem battleSystem = new BattleSystem(characterAttackPower, characterHealth);
+            BattleSystem battleSystem = new BattleSystem(characterAttackPower, characterHealth, new ModifierRepository());
             
             
             battleSystem.Attack("Hero", "Ogre");
@@ -94,9 +94,10 @@ namespace RPGAAS
             };
             
             // act
-            BattleSystem battleSystem = new BattleSystem(characterAttackPower, characterHealth);
+            ModifierRepository modifierRepository = new ModifierRepository();
+            BattleSystem battleSystem = new BattleSystem(characterAttackPower, characterHealth, modifierRepository);
             
-            battleSystem.AddModifier("Hero", new IncreaseAttackPowerBy(5));
+            modifierRepository.AddModifier("Hero", new IncreaseAttackPowerBy(5));
             battleSystem.Attack("Hero", "Ogre");
             
        
@@ -124,9 +125,10 @@ namespace RPGAAS
             };
             
             // act
-            BattleSystem battleSystem = new BattleSystem(characterAttackPower, characterHealth);
+            ModifierRepository modifierRepository = new ModifierRepository();
+            BattleSystem battleSystem = new BattleSystem(characterAttackPower, characterHealth, modifierRepository);
             
-            battleSystem.AddModifier("Hero", new IncreaseAttackMultiplier(2));
+            modifierRepository.AddModifier("Hero", new IncreaseAttackMultiplier(2));
             battleSystem.Attack("Hero", "Ogre");
             
        
@@ -153,11 +155,13 @@ namespace RPGAAS
             };
             
             // act
-            BattleSystem battleSystem = new BattleSystem(characterAttackPower, characterHealth);
+            ModifierRepository modifierRepository = new ModifierRepository();
+
+            BattleSystem battleSystem = new BattleSystem(characterAttackPower, characterHealth, modifierRepository);
             
-            battleSystem.AddModifier("Hero", new IncreaseAttackPowerBy(5));
-            battleSystem.AddModifier("Hero", new IncreaseAttackMultiplier(2));
-            battleSystem.AddModifier("Hero", new IncreaseAttackPowerBy(5));
+            modifierRepository.AddModifier("Hero", new IncreaseAttackPowerBy(5));
+            modifierRepository.AddModifier("Hero", new IncreaseAttackMultiplier(2));
+            modifierRepository.AddModifier("Hero", new IncreaseAttackPowerBy(5));
             battleSystem.Attack("Hero", "Ogre");
             
        

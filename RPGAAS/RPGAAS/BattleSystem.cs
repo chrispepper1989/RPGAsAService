@@ -7,37 +7,32 @@ namespace RPGAAS
 {
     public class BattleSystem : IBattleSystem
     {
-        private Dictionary<string, int> characterAttackPower;
-        private Dictionary<string, int> characterHealth;
-        private Dictionary<string, List<ICharacterModifier>> mods = new Dictionary<string, List<ICharacterModifier>>();
-        public BattleSystem(Dictionary<string, int> characterAttackPower, Dictionary<string, int> characterHealth)
+        private Dictionary<string, int> _characterAttackPower;
+        private Dictionary<string, int> _characterHealth;
+        private IModifierRepository _characterModifiers; 
+        public BattleSystem(Dictionary<string, int> characterAttackPower, Dictionary<string, int> characterHealth, IModifierRepository characterModifiers)
         {
-            this.characterAttackPower = characterAttackPower;
-            this.characterHealth = characterHealth;
+            _characterModifiers = characterModifiers;
+            _characterAttackPower = characterAttackPower;
+            _characterHealth = characterHealth;
         }
         
         public void Attack(string attackingCharacter, string defendingCharacter)
         {
-            var buffs = GetModifiers(attackingCharacter).OrderBy(x => x.Priority);
-            var attackPower = characterAttackPower[attackingCharacter];
-            var enemyHealth = characterHealth[defendingCharacter];
+            var buffs = _characterModifiers.GetModifiers(attackingCharacter);
+            var attackPower = _characterAttackPower[attackingCharacter];
           
             foreach (var buff in buffs)
             {
                 attackPower = buff.ModifyAttackPower(attackPower);
             }
             
-            characterHealth[defendingCharacter] -= attackPower;
+            _characterHealth[defendingCharacter] -= attackPower;
         }
-
-        private List<ICharacterModifier> GetModifiers(string attackingCharacter)
-        {
-            return mods.ContainsKey(attackingCharacter) ? mods[attackingCharacter] : new List<ICharacterModifier>();
-        }
-
+        
         public int GetHealth(string character)
         {
-            return characterHealth[character];
+            return _characterHealth[character];
         }
 
         public bool IsDead(string character)
@@ -45,13 +40,6 @@ namespace RPGAAS
             return GetHealth(character) <= 0;
         }
 
-        public void AddModifier(string character, ICharacterModifier modifier)
-        {
-            if (!mods.ContainsKey(character))
-            {
-                mods[character] = new List<ICharacterModifier>();
-            }
-            mods[character].Add(modifier);
-        }
+        
     }
 }

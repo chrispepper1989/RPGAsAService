@@ -6,6 +6,6 @@
         public int GetHealth(string character);
         public bool IsDead(string character);
 
-        public void AddModifier(string character, ICharacterModifier modifier);
+      
     }
 }
