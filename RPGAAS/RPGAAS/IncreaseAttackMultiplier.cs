@@ -8,6 +8,8 @@
             _multiplier = amount;
         }
 
+        public int Priority { get; } = 1;
+
         public int ModifyAttackPower(int normalAttack)
         {
             return normalAttack * _multiplier;

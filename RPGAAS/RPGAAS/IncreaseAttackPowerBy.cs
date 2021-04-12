@@ -8,6 +8,8 @@
             _attackBuff = attackBuff;
         }
 
+        public int Priority { get; } = 0;
+
         public int ModifyAttackPower(int normalAttack)
         {
             return normalAttack + _attackBuff;
