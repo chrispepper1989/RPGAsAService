@@ -24,7 +24,7 @@ namespace RPGAAS
           
             foreach (var buff in buffs)
             {
-                attackPower = buff.ModifyAttackPower(attackPower);
+                attackPower = buff.ModifyAttackPower(attackPower, GetHealth(attackingCharacter));
             }
             
             _characterHealth[defendingCharacter] -= attackPower;

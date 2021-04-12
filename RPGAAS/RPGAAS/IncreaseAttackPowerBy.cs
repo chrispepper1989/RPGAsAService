@@ -10,9 +10,9 @@
 
         public int Priority { get; } = 0;
 
-        public int ModifyAttackPower(int normalAttack)
+        public int ModifyAttackPower(int currentAttackPower, int characterHealth)
         {
-            return normalAttack + _attackBuff;
+            return currentAttackPower + _attackBuff;
         }
     }
 }

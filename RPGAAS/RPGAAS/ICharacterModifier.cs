@@ -3,6 +3,6 @@
     public interface ICharacterModifier
     {  
         public int Priority { get; }
-        public int ModifyAttackPower(int normalAttack);
+        public int ModifyAttackPower(int currentAttackPower, int characterHealth);
     }
 }

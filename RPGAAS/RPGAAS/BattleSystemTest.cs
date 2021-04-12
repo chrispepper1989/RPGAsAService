@@ -158,8 +158,8 @@ namespace RPGAAS
             ModifierRepository modifierRepository = new ModifierRepository();
 
             BattleSystem battleSystem = new BattleSystem(characterAttackPower, characterHealth, modifierRepository);
-            //todo this would be a nice way to have it
-            //modifierRepository.AddModifier("Hero", new WhenHealthBelow(5).IncreaseAttackMultiplier(2));
+        
+            modifierRepository.AddModifier("Hero", new IncreaseAttackMultiplier(2).WhenHealth( health => health < 5 ));
             battleSystem.Attack("Hero", "Ogre");
             
        
@@ -208,6 +208,4 @@ namespace RPGAAS
             battleSystem.IsDead("Hero").Should().Be(false);
         }
     }
-
-
 }
